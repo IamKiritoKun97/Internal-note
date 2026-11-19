@@ -1567,8 +1567,9 @@
       try {
         if (navigator.clipboard && navigator.clipboard.readText) {
           const clip = (await navigator.clipboard.readText()).trim();
-          // Only accept something that looks like an ID, e.g. ADU-19809 or CS-123456
-          if (/^[A-Za-z]{2,6}-\d{3,}$/.test(clip) && clip !== ticketEl.value.trim()) {
+          // Accept any single-token ticket ID (e.g. ADU-19809, CSEMAIL-298200, CS-123456):
+          // no spaces, contains a digit, letters/digits with - _ . # allowed, 3-40 characters
+          if (/^(?=.*\d)[A-Za-z0-9][A-Za-z0-9_\-.#]{2,39}$/.test(clip) && clip !== ticketEl.value.trim()) {
             ticketEl.value = clip;
             saveAndRefresh();
             showToast("Conversation ID pasted", false);
