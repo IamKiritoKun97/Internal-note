@@ -2327,6 +2327,9 @@ const BRANCH_CODE_OPTIONS = [
     activeSelections = [];
     const checkboxes = document.querySelectorAll('.panel-item input[type="checkbox"]:checked');
     checkboxes.forEach(cb => { cb.checked = false; });
+
+    // Reset also clears the Conversation ID (saveAndRefresh below stores the empty value)
+    document.getElementById('ticketId').value = '';
     
     renderDynamicInputs();
     updateStatuses();
