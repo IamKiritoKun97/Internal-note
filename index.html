@@ -2001,15 +2001,36 @@ const BRANCH_CODE_OPTIONS = [
     "Bank Zero Mukuru": "Bank Zero Mukuru"
   };
 
+  // Reverse lookup: branch-code bank name -> bank dropdown name
+  const BRANCH_BANK_TO_BANK = (() => {
+    const m = {};
+    Object.keys(BANK_TO_BRANCH_BANK).forEach(k => { m[BANK_TO_BRANCH_BANK[k]] = k; });
+    m["OM Bank under Bidvest option 1"] = "Bidvest Bank";
+    m["OM Bank under Bidvest option 2"] = "Bidvest Bank";
+    return m;
+  })();
+
+  // Sets the "To" bank of Updated Bank Name from a chosen branch code.
+  // Returns true if it updated something (and everything re-rendered).
+  function autoSelectToBank(branchBankName) {
+    const bankSel = activeSelections.find(s => getSelectKind(s.template) === 'bank');
+    if (!bankSel) return false;
+    // No matching bank in the dropdown: clear the "To" bank instead of leaving an old one
+    bankSel.v2 = BRANCH_BANK_TO_BANK[branchBankName] || '';
+    renderDynamicInputs();
+    updateStatuses();
+    return true;
+  }
+
   // Returns true if a branch-code selection was updated (and everything re-rendered)
   function autoSelectBranchCode(bankName) {
     const branchSel = activeSelections.find(s => getSelectKind(s.template) === 'branch');
+    if (!branchSel) return false;
     const branchBank = BANK_TO_BRANCH_BANK[bankName];
-    if (!branchSel || !branchBank) return false;
-    const match = BRANCH_CODE_OPTIONS.find(b => b.bank === branchBank);
-    if (!match) return false;
-    branchSel.v1 = match.code;
-    branchSel.bank = match.bank;
+    const match = branchBank ? BRANCH_CODE_OPTIONS.find(b => b.bank === branchBank) : null;
+    // No matching branch code (or an ambiguous one like Bidvest): clear it instead of leaving an old one
+    branchSel.v1 = match ? match.code : '';
+    branchSel.bank = match ? match.bank : '';
     renderDynamicInputs();
     updateStatuses();
     return true;
@@ -2074,6 +2095,8 @@ const BRANCH_CODE_OPTIONS = [
         const b = BRANCH_CODE_OPTIONS[Number(v)];
         sel.v1 = b ? b.code : '';
         sel.bank = b ? b.bank : '';
+        // Picking a branch code also sets the "To" bank of Updated Bank Name (if active)
+        if (b && autoSelectToBank(b.bank)) return;
       }
       updateStatuses(); // updates template text, live preview and localStorage
     });
