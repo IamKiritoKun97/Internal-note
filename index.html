@@ -440,25 +440,31 @@
       padding: 2px 8px;
     }
 
-    /* Fixed (read-only) entries in Selected Changes */
+    /* Fixed (read-only) entries in Selected Changes: same look as the preset buttons */
     .selected-change-card.is-fixed {
       flex-direction: row;
       align-items: center;
-      justify-content: space-between;
       gap: 12px;
-      padding: 12px 16px;
+      padding: 12px 14px;
+      margin-bottom: -4px;
+      background: var(--glass-surface);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
     }
-    .selected-change-card.is-fixed .change-card-title { font-weight: 500; word-break: break-word; }
-    .fixed-badge {
-      flex-shrink: 0;
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      background: var(--glass-surface-active);
-      border-radius: 100px;
-      padding: 3px 8px;
+    .selected-change-card.is-fixed:hover {
+      background: var(--glass-surface-hover);
+      border-color: rgba(255,255,255,0.25);
+      box-shadow: var(--premium-glow), inset 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .selected-change-card.is-fixed > svg { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
+    .selected-change-card.is-fixed .change-card-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: normal;
+      word-break: break-word;
+      line-height: 1.35;
     }
 
     .stack-count {
@@ -2182,10 +2188,8 @@ const BRANCH_CODE_OPTIONS = [
               const fixedTitle = document.createElement('span');
               fixedTitle.className = 'change-card-title';
               fixedTitle.textContent = sel.textLabel;
-              const badge = document.createElement('span');
-              badge.className = 'fixed-badge';
-              badge.textContent = 'Fixed';
-              fixed.append(fixedTitle, badge);
+              fixed.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+              fixed.appendChild(fixedTitle);
               container.appendChild(fixed);
           }
       });
